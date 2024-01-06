@@ -221,22 +221,6 @@ def Compare_GFWList_To_GeoSite():
                             marked = True
                     else:
                         break
-                for j, domain in enumerate(cacher_domain):
-                    if not(marked):
-                        if target_shadow[0][i] == compare_shadow[0][j]:
-                            cachew_resz_idx.append(i)
-                            cachew_resz_tag.append(cacher_domain_tag[j])
-                            marked = True
-                    else:
-                        break
-                for j, domain in enumerate(cacher_domain):
-                    if not(marked):
-                        if target_shadow[1][i] == compare_shadow[0][j]:
-                            cachew_resz_idx.append(i)
-                            cachew_resz_tag.append(cacher_domain_tag[j])
-                            marked = True
-                    else:
-                        break
             for j, regexp in enumerate(cacher_regexp):
                 if not(marked):
                     if re.search(regexp, cacher_gfwlist[i]) != None:
@@ -253,6 +237,15 @@ def Compare_GFWList_To_GeoSite():
                         marked = True
                 else:
                     break
+            if len(target_shadow[0][i]) != len(target_shadow[1][i]):
+                for j, domain in enumerate(cacher_domain):
+                    if not(marked):
+                        if target_shadow[1][i] == compare_shadow[0][j]:
+                            cachew_resz_idx.append(i)
+                            cachew_resz_tag.append(cacher_domain_tag[j])
+                            marked = True
+                    else:
+                        break
         for j, tld in enumerate(cacher_tld):
             if not(marked):
                 if target_shadow[2][i] == tld:
