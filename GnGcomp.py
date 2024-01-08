@@ -225,7 +225,7 @@ def Compare_GFWList_To_GeoSite():
                         break
             for j, regexp in enumerate(cacher_regexp):
                 if not(marked):
-                    if re.search(regexp, cacher_gfwlist[i]) != None:
+                    if re.search(regexp, target_shadow[0][i]) != None:
                         cachew_resz_idx.append(i)
                         cachew_resz_tag.append(cacher_regexp_tag[j])
                         marked = True
