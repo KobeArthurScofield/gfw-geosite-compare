@@ -214,15 +214,14 @@ def Compare_GFWList_To_GeoSite():
     for countr, i in enumerate(cacher_odin_idx):
         marked = False
         if target_shadow[1][i] != "":
-            if len(target_shadow[0][i]) != len(target_shadow[1][i]):
-                for j, full_domain in enumerate(cacher_full_domain):
-                    if not(marked):
-                        if target_shadow[0][i] == full_domain:
-                            cachew_resz_idx.append(i)
-                            cachew_resz_tag.append(cacher_full_domain_tag[j])
-                            marked = True
-                    else:
-                        break
+            for j, full_domain in enumerate(cacher_full_domain):
+                if not(marked):
+                    if target_shadow[0][i] == full_domain:
+                        cachew_resz_idx.append(i)
+                        cachew_resz_tag.append(cacher_full_domain_tag[j])
+                        marked = True
+                else:
+                    break
             for j, regexp in enumerate(cacher_regexp):
                 if not(marked):
                     if re.search(regexp, target_shadow[0][i]) != None:
