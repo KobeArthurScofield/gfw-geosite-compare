@@ -100,20 +100,22 @@ def Read_GeoSite(directorypath: str):
                         cachew_full_domain_dir.append(filename + "@" + line.split("@")[1].split(" ")[0])
                     else:
                         cachew_full_domain_dir.append(filename)
-                if "." in line:
+                else:
                     if line.startswith("domain:"):
                         line = line[len("domain:"):]
-                    cachew_domain.append(line.split(" ")[0].lower())
-                    if "@" in line:
-                        cachew_domain_dir.append(filename + "@" + line.split("@")[1].split(" ")[0])
-                    else:
-                        cachew_domain_dir.append(filename)
-                else:
-                    cachew_tld.append(line.split(" ")[0].lower())
-                    if "@" in line:
-                        cachew_tld_dir.append(filename + "@" + line.split("@")[1].split(" ")[0])
-                    else:
-                        cachew_tld_dir.append(filename)
+                    xtrobj = tldextract.extract(line.split(" ")[0].lower())
+                    if xtrobj.registered_domain != "":
+                        cachew_domain.append(xtrobj.fqdn)
+                        if "@" in line:
+                            cachew_domain_dir.append(filename + "@" + line.split("@")[1].split(" ")[0])
+                        else:
+                            cachew_domain_dir.append(filename)
+                    elif (xtrobj.registered_domain == "") and (xtrobj.suffix != ""):
+                        cachew_tld.append(xtrobj.suffix)
+                        if "@" in line:
+                            cachew_tld_dir.append(filename + "@" + line.split("@")[1].split(" ")[0])
+                        else:
+                            cachew_tld_dir.append(filename)
         if (i + 1) % 16 == 0:
             print(i + 1, "/", file_count, " files processed.", sep = "", end = "\r")
         if (i + 1) == file_count:
