@@ -23,6 +23,16 @@ print("Global variables Initialized.")
 # Functions section
 print("Initializing functions...")
 
+def RV_STRING(origin: list, delimeter: str | None = ""):
+    matrix = []
+    for string in origin:
+        tmp = ""
+        for i in range(len(string)):
+            tmp += string[0 - (i + 1)]
+        tmp += delimeter
+        matrix.append(tmp)
+    return matrix.copy()
+
 def Read_GFWList(filepath: str):
     cacher = []
     cachew = []
@@ -128,15 +138,14 @@ def GFWList_Self_Sanitize():
     cachew_resz_tag = []
     repeat_count = 0
     print("Building data stack...")
-    listed_name     = []
-    for domain in cacher_gfwlist:
-        listed_name.append("." + domain)
+    target_shadow  = RV_STRING(cacher_gfwlist.copy())
+    compare_shadow = RV_STRING(cacher_gfwlist.copy(), ".")
     print("Build data stack complete.")
     total_count = len(cacher_gfwlist)
-    for i, tdomain in enumerate(cacher_gfwlist):
+    for i, tdomain in enumerate(target_shadow):
         marked = False
-        for comp in listed_name:
-            if tdomain.endswith(comp):
+        for comp in compare_shadow:
+            if tdomain.startswith(comp):
                 marked = True
                 break
         if marked:
@@ -171,10 +180,11 @@ def Compare_GFWList_To_GeoSite():
     cachew_resz_idx = []
     cachew_resz_tag = []
     total_count = len(cacher_odin_idx)
+    compare_shadow = [[], []]
     print("Building data cache for comparation...")
-    compare_shadow = []
-    for domain in cacher_domain:
-        compare_shadow.append("." + domain)
+    target_shadow = RV_STRING(cacher_gfwlist.copy())
+    compare_shadow[0].extend(RV_STRING(cacher_domain.copy()))
+    compare_shadow[1].extend(RV_STRING(cacher_domain.copy(), "."))
     print("Data cache built.")
     for countr, i in enumerate(cacher_odin_idx):
         marked = False
@@ -196,15 +206,15 @@ def Compare_GFWList_To_GeoSite():
                     marked = True
             else:
                 break
-        for j, domain in enumerate(cacher_domain):
+        for j in range(len(cacher_domain)):
             if not(marked):
-                if domain == cacher_gfwlist[i]:
+                if compare_shadow[0][j] == target_shadow[i]:
                     cachew_resz_idx.append(i)
                     cachew_resz_tag.append(cacher_domain_tag[j])
                     marked = True
-                elif cacher_gfwlist[i].endswith(compare_shadow[j]):
-                    if len(compare_shadow[j]) > longest:
-                        longest = len(compare_shadow[j])
+                elif target_shadow[i].startswith(compare_shadow[1][j]):
+                    if len(compare_shadow[1][j]) > longest:
+                        longest = len(compare_shadow[1][j])
                         tmp_tag = cacher_domain_tag[j]
             else:
                 break
