@@ -145,9 +145,10 @@ def GFWList_Self_Sanitize():
     for i, tdomain in enumerate(target_shadow):
         marked = False
         for comp in compare_shadow:
-            if tdomain.startswith(comp):
-                marked = True
+            if marked:
                 break
+            else:
+                marked = tdomain.startswith(comp)
         if marked:
             repeat_count += 1
             cachew_resz_idx.append(i)
@@ -191,33 +192,29 @@ def Compare_GFWList_To_GeoSite():
         longest = 0
         tmp_tag = ""
         for j, full_domain in enumerate(cacher_full_domain):
-            if not(marked):
-                if full_domain == cacher_gfwlist[i]:
-                    cachew_resz_idx.append(i)
-                    cachew_resz_tag.append(cacher_full_domain_tag[j])
-                    marked = True
-            else:
+            if marked:
                 break
+            elif full_domain == cacher_gfwlist[i]:
+                cachew_resz_idx.append(i)
+                cachew_resz_tag.append(cacher_full_domain_tag[j])
+                marked = True
         for j, regexp in enumerate(cacher_regexp):
-            if not(marked):
-                if re.search(regexp, cacher_gfwlist[i]) != None:
-                    cachew_resz_idx.append(i)
-                    cachew_resz_tag.append(cacher_regexp_tag[j])
-                    marked = True
-            else:
+            if marked:
                 break
+            elif re.search(regexp, cacher_gfwlist[i]) != None:
+                cachew_resz_idx.append(i)
+                cachew_resz_tag.append(cacher_regexp_tag[j])
+                marked = True
         for j in range(len(cacher_domain)):
-            if not(marked):
-                if compare_shadow[0][j] == target_shadow[i]:
-                    cachew_resz_idx.append(i)
-                    cachew_resz_tag.append(cacher_domain_tag[j])
-                    marked = True
-                elif target_shadow[i].startswith(compare_shadow[1][j]):
-                    if len(compare_shadow[1][j]) > longest:
-                        longest = len(compare_shadow[1][j])
-                        tmp_tag = cacher_domain_tag[j]
-            else:
+            if marked:
                 break
+            elif compare_shadow[0][j] == target_shadow[i]:
+                cachew_resz_idx.append(i)
+                cachew_resz_tag.append(cacher_domain_tag[j])
+                marked = True
+            elif target_shadow[i].startswith(compare_shadow[1][j]) and len(compare_shadow[1][j]) > longest:
+                longest = len(compare_shadow[1][j])
+                tmp_tag = cacher_domain_tag[j]
         if (not(marked)) and (longest > 0):
             cachew_resz_idx.append(i)
             cachew_resz_tag.append(tmp_tag)
