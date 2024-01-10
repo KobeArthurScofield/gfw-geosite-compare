@@ -33,6 +33,12 @@ def RV_STRING(origin: list, delimeter: str | None = ""):
         matrix.append(tmp)
     return matrix.copy()
 
+def LEN_STRING(origin: list):
+    lenght_list = []
+    for string in origin:
+        lenght_list.append(len(string))
+    return lenght_list.copy()
+
 def Read_GFWList(filepath: str):
     cacher = []
     cachew = []
@@ -140,15 +146,17 @@ def GFWList_Self_Sanitize():
     print("Building data stack...")
     target_shadow  = RV_STRING(cacher_gfwlist.copy())
     compare_shadow = RV_STRING(cacher_gfwlist.copy(), ".")
+    len_target     = LEN_STRING(target_shadow.copy())
+    len_compare    = LEN_STRING(compare_shadow.copy())
     print("Build data stack complete.")
     total_count = len(cacher_gfwlist)
     for i, tdomain in enumerate(target_shadow):
         marked = False
-        for comp in compare_shadow:
+        for j, comp in enumerate(compare_shadow):
             if marked:
                 break
-            else:
-                marked = tdomain.startswith(comp)
+            elif len_target[i] > len_compare[j]:
+                marked = (tdomain[:len_compare[j]] == comp)
         if marked:
             repeat_count += 1
             cachew_resz_idx.append(i)
@@ -186,6 +194,8 @@ def Compare_GFWList_To_GeoSite():
     target_shadow = RV_STRING(cacher_gfwlist.copy())
     compare_shadow[0].extend(RV_STRING(cacher_domain.copy()))
     compare_shadow[1].extend(RV_STRING(cacher_domain.copy(), "."))
+    len_target = LEN_STRING(target_shadow.copy())
+    len_comp1  = LEN_STRING(compare_shadow[1].copy())
     print("Data cache built.")
     for countr, i in enumerate(cacher_odin_idx):
         marked = False
@@ -212,9 +222,10 @@ def Compare_GFWList_To_GeoSite():
                 cachew_resz_idx.append(i)
                 cachew_resz_tag.append(cacher_domain_tag[j])
                 marked = True
-            elif target_shadow[i].startswith(compare_shadow[1][j]) and len(compare_shadow[1][j]) > longest:
-                longest = len(compare_shadow[1][j])
-                tmp_tag = cacher_domain_tag[j]
+            elif len_target[i] > len_comp1[j]:
+                if (target_shadow[i][:len_comp1[j]] == compare_shadow[1][j]) and (len_comp1[j] > longest):
+                    longest = len_comp1[j]
+                    tmp_tag = cacher_domain_tag[j]
         if (not(marked)) and (longest > 0):
             cachew_resz_idx.append(i)
             cachew_resz_tag.append(tmp_tag)

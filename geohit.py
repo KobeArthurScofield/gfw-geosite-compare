@@ -23,6 +23,12 @@ print("Global variables Initialized.")
 # Functions section
 print("Initializing functions...")
 
+def LEN_STRING(origin: list):
+    lenght_list = []
+    for string in origin:
+        lenght_list.append(len(string))
+    return lenght_list.copy()
+
 def Read_GFWList(filepath: str):
     cacher = []
     cachew = []
@@ -131,15 +137,17 @@ def GFWList_Self_Sanitize():
     listed_name     = []
     for domain in cacher_gfwlist:
         listed_name.append("." + domain)
+    len_gfw = LEN_STRING(cacher_gfwlist.copy())
+    len_cmp = LEN_STRING(listed_name.copy())
     print("Build data stack complete.")
     total_count = len(cacher_gfwlist)
     for i, tdomain in enumerate(cacher_gfwlist):
         marked = False
-        for comp in listed_name:
+        for j, comp in enumerate(listed_name):
             if marked:
                 break
-            else:
-                marked = tdomain.endswith(comp)
+            elif len_gfw[i] > len_cmp[j]:
+                marked = (tdomain[0 - len_cmp[j]:] == comp)
         if marked:
             repeat_count += 1
             cachew_resz_idx.append(i)
@@ -176,6 +184,8 @@ def Compare_GFWList_To_GeoSite():
     compare_shadow = []
     for domain in cacher_domain:
         compare_shadow.append("." + domain)
+    len_gfw = LEN_STRING(cacher_gfwlist.copy())
+    len_cmp = LEN_STRING(compare_shadow.copy())
     print("Data cache built.")
     for countr, i in enumerate(cacher_odin_idx):
         marked = False
@@ -202,9 +212,10 @@ def Compare_GFWList_To_GeoSite():
                 cachew_resz_idx.append(i)
                 cachew_resz_tag.append(cacher_domain_tag[j])
                 marked = True
-            elif cacher_gfwlist[i].endswith(compare_shadow[j]) and (len(compare_shadow[j]) > longest):
-                longest = len(compare_shadow[j])
-                tmp_tag = cacher_domain_tag[j]
+            elif len_gfw[i] > len_cmp[j]:
+                if (cacher_gfwlist[i][0 - len_cmp[j]:] == compare_shadow[j]) and (len_cmp[j] > longest):
+                    longest = len_cmp[j]
+                    tmp_tag = cacher_domain_tag[j]
         if (not(marked)) and (longest > 0):
             cachew_resz_idx.append(i)
             cachew_resz_tag.append(tmp_tag)
