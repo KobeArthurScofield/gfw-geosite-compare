@@ -188,7 +188,6 @@ def Compare_GFWList_To_GeoSite():
     cacher_regexp_tag      = geosite_regexp_buffer[1].copy()
     cachew_resz_idx = []
     cachew_resz_tag = []
-    total_count = len(cacher_odin_idx)
     compare_shadow = [[], []]
     print("Building data cache for comparation...")
     target_shadow = RV_STRING(cacher_gfwlist.copy())
@@ -230,10 +229,9 @@ def Compare_GFWList_To_GeoSite():
             cachew_resz_idx.append(i)
             cachew_resz_tag.append(tmp_tag)
             marked = True
-        if (countr + 1) % 64 == 0:
-            print(countr + 1, "/", total_count, " completed.", sep = "", end = "\r")
-        if (countr + 1) == total_count:
-            print(countr + 1, "/", total_count, " completed.", sep = "")
+        if countr % 64 == 0:
+            print(".", sep = "", end = "")
+    print("Completed.")
     gfwlist_compared_resz[0].extend(cachew_resz_idx)
     gfwlist_compared_resz[1].extend(cachew_resz_tag)
 
